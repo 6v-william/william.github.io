@@ -1,4 +1,3 @@
-// import { PreviewPannel } from '@rp/iwlc-builder';
 import Style from './index.less';
 
 interface ViewAreaProps {
