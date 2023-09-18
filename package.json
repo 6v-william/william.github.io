@@ -1,0 +1,54 @@
+{
+  "name": "pc-template",
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "umi dev",
+    "start:prod": "DEBUG_ENV=prod umi dev",
+    "build": "umi build",
+    "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
+    "clean": "rm -rf node_modules **/*/node_modules",
+    "lint": "eslint ."
+  },
+  "watch": {
+    "build": "{src}/*"
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,less,md,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
+    ]
+  },
+  "peerDependencies": {
+    "ahooks": "^3.7.8",
+    "antd": "^5.7.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4",
+    "re-resizable": "^6.9.9",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recoil": "^0.7.7",
+    "umi": "^4.0.72"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.195",
+    "@types/node": "^20.4.8",
+    "@types/react": "^18.2.15",
+    "lint-staged": "^13.2.3",
+    "prettier": "^3.0.0",
+    "typescript": "^5.1.6",
+    "yorkie": "^2.0.0"
+  },
+  "author": "迦叶 <lw_murphy@163.com>"
+}
