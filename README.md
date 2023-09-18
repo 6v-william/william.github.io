@@ -1,39 +1,30 @@
-# template-umi
+# `pc-template`
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+## 指令
 
-#### 软件架构
-软件架构说明
+```bash
+pnpm i # 安装依赖, 只允许使用pnpm，lock版本
 
+pnpm add xxx # 安装新的依赖
+pnpm upgrade [SCRIPT_NAME] # 更新依赖
+pnpm remove xxx # 删除依赖
 
-#### 安装教程
+pnpm start # 本地开发
+```
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## 应用发布
 
-#### 使用说明
+不需要手动发布, 每次 git 提交都会触发流水线进行自动发布
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+- `master`: 主分支，每次发布后会从prod合并至此，做代码留存
+- `prod`: 发布分支, 禁止直接改, 只能从 `pre` 合并. **每次提交会触发正式环境发布流水线，要抓紧配置**
+- `pre`: 发布分支, 禁止直接改, 只能从 `daily` 合并. **每次提交会触发预发环境发布流水线，要抓紧配置**
+- `daily`: 日常分支, 禁止直接改, 只能从个人的开发分支合并. **每次提交会触发日常环境发布流水线，要抓紧配置**.
+- `daily_xxx`: 个人开发分支. 注意需要定期从 `daily` 拉取其他人的代码
 
-#### 参与贡献
+每次提交前需要检查:
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+- 确保代码可以正确执行
+- 清理代码执行中产生的 warning 和 error
+- 清理 `npm run lint` 中的所有错误提示
+- 去掉自己调试用的 `console.log` 打印信息, 不要带到线上
