@@ -5,7 +5,7 @@
   "scripts": {
     "start": "umi dev",
     "start:prod": "DEBUG_ENV=prod umi dev",
-    "build": "umi build",
+    "build": "rm -rf node_modules/ && DEBUG_ENV=prod umi build",
     "build:test": "rm -rf dist/ && DEBUG_ENV=test umi build",
     "prettier": "prettier --write \"**/*.{js,jsx,tsx,ts,less,md,json}\"",
     "clean": "rm -rf node_modules **/*/node_modules",
@@ -32,7 +32,7 @@
     ]
   },
   "dependencies": {
-    "@flc/workbench-tools": "^0.0.1",
+    "@flc/workbench-tools": "^0.0.4",
     "ahooks": "^3.7.8",
     "antd": "^5.7.0",
     "lodash": "^4.17.21",
@@ -40,8 +40,7 @@
     "query-string": "^8.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "recoil": "^0.7.7",
-    "umi-request": "^1.4.0"
+    "recoil": "^0.7.7"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.195",
