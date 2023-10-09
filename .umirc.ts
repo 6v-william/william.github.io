@@ -1,8 +1,7 @@
 import { defineConfig } from 'umi';
 import { name, version } from './package.json';
 
-const isDebugProd = process.env.DEBUG_ENV === 'prod';
-const proxyTarget = isDebugProd ? 'https://www.xx.com' : 'http://www.xx.net';
+const proxyTarget = process.env.DEBUG_ENV === 'prod' ? 'https://ai-api.feilianyun.cn' : 'https://ai-api-test.feilianyun.cn';
 
 export default defineConfig({
   title: 'pc-template',
@@ -22,12 +21,15 @@ export default defineConfig({
   routes: [
     {
       path: '/',
-      component: '@/layouts/index',
-      layout: false
+      // component: '@/layouts/index', // 不用挂载这个组件，UMI4会默认将layout挂载上去，如果再注册一会会导致layout渲染两次
+      routes: [
+        { path: '/', component: '@/pages/home' }, // 首页
+      ]
     },
     {
-      path: '/editor',
-      component: '@/layouts/skeleton',
+      path: '/withoutLayout',
+      component: '@/pages/withoutLayout',
+      layout: false
     }
   ],
   proxy: {
@@ -44,5 +46,7 @@ export default defineConfig({
     PACKAGE_NAME: name,
     VERSION: `${version}`,
     TIMESTAMP: '(localhost)',
-  }
+    'process.env.DEBUG_ENV': process.env.DEBUG_ENV
+  },
+  scripts: []
 });

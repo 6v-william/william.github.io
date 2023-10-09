@@ -1,10 +1,11 @@
-import Skeleton from './skeleton';
+import { useEffect } from 'react';
+import { Outlet } from 'umi';
 
 export default () => {
 
-  return (
-    <div className="lwrc-editor" id="lwrcEditor">
-      <Skeleton />
-    </div>
-  );
+  useEffect(() => {
+    console.log('存在layout');
+  }, []);
+
+  return <Outlet />;
 };
