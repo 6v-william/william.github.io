@@ -2,9 +2,6 @@
 tag="$([[ $1 = "latest" ]] && echo "latest" || echo "beta")"
 branch="$([[ $tag = "latest" ]] && echo "prod" || echo "daily")"
 
-git config user.email "wliu@relaper.com"
-git config user.name "wliu"
-
 pnpm i
 pnpm version patch
 
