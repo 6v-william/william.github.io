@@ -9,7 +9,10 @@
     "@typescript-eslint/no-unused-vars": 1,
     "for-direction": 2,
     "array-bracket-newline": [1, { "multiline": true }],
-    "array-element-newline": [1, { "multiline": true }],
+    "array-element-newline": [1, {
+      "ArrayExpression": "consistent",
+      "ArrayPattern": { "minItems": 3 }
+    }],
     "arrow-parens": [1, "as-needed"],
     "no-var": 2,
     "block-scoped-var": 2,

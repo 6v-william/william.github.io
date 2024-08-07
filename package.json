@@ -32,16 +32,15 @@
     ]
   },
   "dependencies": {
-    "@flc/workbench-tools": "^0.0.6",
+    "@flc/workbench-tools": "^0.0.63",
     "ahooks": "^3.7.8",
     "antd": "^5.7.0",
-    "antd-mobile": "^5.32.4",
+    "dayjs": "^1.11.10",
+    "less": "^4.2.0",
     "lodash": "^4.17.21",
-    "moment": "^2.29.4",
     "query-string": "^8.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-i18next": "^13.2.2",
     "recoil": "^0.7.7"
   },
   "devDependencies": {
@@ -49,7 +48,7 @@
     "@types/node": "^20.4.8",
     "@types/react": "^18.2.15",
     "@types/react-i18next": "^8.1.0",
-    "lint-staged": "^13.2.3",
+    "less-loader": "^12.2.0",
     "prettier": "^3.0.0",
     "typescript": "^5.1.6",
     "umi": "^4.0.83",
