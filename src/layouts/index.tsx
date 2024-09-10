@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Outlet } from 'umi';
+import Style from './index.less';
 
 export default () => {
 
@@ -7,5 +8,7 @@ export default () => {
     console.log('存在layout');
   }, []);
 
-  return <Outlet />;
+  return <div className={Style.root_wrap}>
+    <Outlet />
+  </div>;
 };

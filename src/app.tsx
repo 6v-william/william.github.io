@@ -1,19 +1,29 @@
 
-import { SafeArea } from 'antd-mobile';
 import 'moment/locale/zh-cn';
 
 import '@/public/styles/reset.less';
 import '@/public/styles/common.less';
-import '@/public/styles/flex.less';
 
-import { WithTranslation, initTranslation } from '@flc/workbench-tools';
+import { WithTranslation, initExtend } from '@flc/workbench-tools';
+import { RecoilRoot } from 'recoil';
 
-initTranslation({ defaultLanguage: 'en-US' });
+// 处理request请求baseurl
+if (process.env.DEBUG_ENV) {
+  initExtend(
+    process.env.DEBUG_ENV === "prod"
+      ? "https://flytool.cn"
+      : process.env.DEBUG_ENV === "test"
+        ? "https://test.flytool.cn"
+        : undefined
+  );
+} else {
+  initExtend();
+}
 
 export function rootContainer(container: any) {
-  return <WithTranslation>
-    <SafeArea position="top" />
-    { container }
-    <SafeArea position="bottom" />
-  </WithTranslation>;
+  return (
+    <RecoilRoot>
+      <WithTranslation>{container}</WithTranslation>
+    </RecoilRoot>
+  );
 }
