@@ -1,7 +1,7 @@
 import { defineConfig } from 'umi';
 import { name, version } from './package.json';
 
-const proxyTarget = process.env.DEBUG_ENV === 'prod' ? 'https://ai-api.feilianyun.cn' : 'https://ai-api-test.feilianyun.cn';
+// const proxyTarget = process.env.DEBUG_ENV === 'prod' ? 'https://ai-api.feilianyun.cn' : 'https://ai-api-test.feilianyun.cn';
 
 export default defineConfig({
   title: 'pc-template',
@@ -33,11 +33,11 @@ export default defineConfig({
     }
   ],
   proxy: {
-    '/proxy': {
-      target: proxyTarget,
-      changeOrigin: true,
-      pathRewrite: { '^/proxy': '' },
-    },
+    // '/proxy': {
+    //   target: proxyTarget,
+    //   changeOrigin: true,
+    //   pathRewrite: { '^/proxy': '' },
+    // },
     '/#/**': {
       pathRewrite: { '^/#': '' },
     },
