@@ -1,99 +1,116 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Table, Tag, Button } from 'antd';
-import { CoinType } from './types';
 import { formatNumber } from '@/utils';
 
 interface CoinListProps {
-  coins: CoinType[];
-  onSelect: (coinId: string) => void;
-  livePrices: Record<string, CoinType>;
+  isLoading: boolean;
+  onSelect: (coinSymbol: string) => void;
 }
 
-const CoinList: React.FC<CoinListProps> = ({ coins, onSelect, livePrices }) => {
+const CoinList: React.FC<CoinListProps> = ({ isLoading, onSelect }) => {
+  const [coins, setCoins] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    // 初始化WebSocket连接
+    const ws = new WebSocket('wss://stream.binance.com:9443/ws/!ticker@arr');
+    wsRef.current = ws;
+
+    ws.onmessage = event => {
+      try {
+        const data = JSON.parse(event.data);
+
+        // 过滤USDT交易对并排序
+        const filteredCoins = data
+          .filter((item: any) => item.s.endsWith('USDT'))
+          .sort((a: any, b: any) => parseFloat(b.q) - parseFloat(a.q)) // 按24h交易量排序
+          .slice(0, 10); // 取前10个
+
+        setCoins(filteredCoins);
+      } catch (err) {
+        console.error('Error parsing Binance data:', err);
+        setError('数据解析错误');
+      }
+    };
+
+    ws.onerror = err => {
+      console.error('WebSocket error:', err);
+      setError('连接失败，请稍后重试');
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
+  }, []);
+
   const columns = [
     {
       title: '排名',
-      dataIndex: 'market_cap_rank',
+      dataIndex: 'rank',
       key: 'rank',
       width: 80,
+      render: (_, __, index) => index + 1,
     },
     {
       title: '名称',
-      dataIndex: 'name',
+      dataIndex: 's',
       key: 'name',
-      render: (_: any, record: any) => (
+      render: (symbol: string) => (
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <img src={record.image} alt={record.name} style={{ width: 16, height: 16 }} />
-          <p>{record.name}</p>
-          <p>{record.symbol.toUpperCase()}</p>
+          <div>
+            <span>{symbol.replace('USDT', '')}</span>
+          </div>
+          <p>USDT</p>
         </div>
       ),
     },
     {
-      title: "流通供应量",
-      dataIndex: 'circulating_supply',
-      key: 'circulating_supply',
-      render: (_: number) => formatNumber(_),
-    },
-    {
-      title: '价格',
-      dataIndex: 'current_price',
+      title: "价格",
+      dataIndex: 'c',
       key: 'price',
-      render: (_: any, record: any) => {
-        const livePrice = livePrices[record.id];
-        const price = livePrice?.current_price || record.current_price;
-        return (
-          <div>
-            {livePrice && <span></span>}
-            ${price.toLocaleString()}
-          </div>
-        );
-      },
+      render: (price: string) => `$${ parseFloat(price).toFixed(2) }`,
     },
     {
       title: '24h变化',
-      dataIndex: 'price_change_percentage_24h',
+      dataIndex: 'P',
       key: 'change',
-      render: (_: any, record: any) => {
-        const liveChange = livePrices[record.id]?.price_change_percentage_24h || record.price_change_percentage_24h;
-        const isPositive = liveChange >= 0;
+      render: (change: string) => {
+        const isPositive = parseFloat(change) >= 0;
         return (
           <Tag
             color={isPositive ? 'green' : 'red'}
-            // icon={isPositive ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
           >
-            {liveChange.toFixed(2)}%
+            {parseFloat(change).toFixed(2)}%
           </Tag>
         );
       },
     },
     {
       title: '市值',
-      dataIndex: 'market_cap',
+      dataIndex: 'q',
       key: 'market_cap',
-      render: (marketCap: any, record: any) => {
-        const liveChange = livePrices[record.id]?.market_cap || record.market_cap;
-
-        return `$${ formatNumber(liveChange) }`;
-      },
+      render: (volume: string) => `$${ formatNumber(parseFloat(volume)) }`,
     },
     {
       title: '24小时交易量',
-      dataIndex: 'total_volume',
+      dataIndex: 'Q',
       key: 'total_volume',
-      render: (marketCap: any, record: any) => {
-        const liveChange = livePrices[record.id]?.total_volume || record.total_volume;
-
-        return formatNumber(liveChange);
-      },
+      render: (volume: string) => formatNumber(parseFloat(volume)),
     },
     {
       title: '操作',
       key: 'action',
-      render: (_: any, record: any) => (
+      render: (_, record: any) => (
         <Button
           type="primary"
-          onClick={() => onSelect(record.id)}
+          onClick={() => onSelect(record.s)}
         >
           详情
         </Button>
@@ -106,10 +123,12 @@ const CoinList: React.FC<CoinListProps> = ({ coins, onSelect, livePrices }) => {
       style={{ flex: 1 }}
       dataSource={coins}
       columns={columns}
-      rowKey="id"
+      rowKey="s"
       pagination={false}
       bordered={false}
       tableLayout="fixed"
+      loading={isLoading || !coins.length}
+      locale={{ emptyText: error || '加载中...' }}
     />
   );
 };

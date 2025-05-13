@@ -1,142 +1,75 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Spin } from 'antd';
 import CoinList from './CoinList';
 import CoinChart from './CoinChart';
 import CoinDetails from './CoinDetails';
-import { fetchTopCoins, fetchCoinData, fetchLivePrice } from '@/api/index';
-import { CoinType, CoinDetailsType } from './types';
+import CoinTrades from './CoinTrades';
 import 'antd/dist/reset.css';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const { Content, Footer } = Layout;
 
-function App() {
-  const [topCoins, setTopCoins] = useState<CoinType[]>([]);
-  const [selectedCoin, setSelectedCoin] = useState<CoinDetailsType | null>(null);
+const App: React.FC = () => {
+  const [selectedCoinSymbol, setSelectedCoinSymbol] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [livePrices, setLivePrices] = useState<Record<string, CoinType>>({});
-  const [liveCoinData, setLiveCoinData] = useState<CoinDetailsType | null>(null);
-  const intervalRef = useRef<NodeJS.Timer | null>(null);
 
+  // 初始加载状态（可根据需要保留或移除）
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const coins = await fetchTopCoins(10);
-        setTopCoins(coins);
-        // 初始化实时价格数据
-        const initialPrices: Record<string, CoinType> = {};
-        coins.forEach((coin: any) => {
-          initialPrices[coin.id] = coin;
-        });
-        setLivePrices(initialPrices);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching top coins:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    // 模拟加载过程，实际数据由CoinList组件通过WebSocket获取
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
   }, []);
 
-  // 实时更新代币列表数据
-  useEffect(() => {
-    if (topCoins.length === 0) return;
-
-    // 清除之前的定时器
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-
-    // 每30秒更新一次价格数据
-    intervalRef.current = setInterval(async () => {
-      try {
-        const coinIds = topCoins.map(coin => coin.id).join(',');
-        const liveData = await fetchLivePrice(coinIds);
-
-        const updatedPrices: Record<string, CoinType> = {};
-        topCoins.forEach(coin => {
-          if (liveData[coin.id]) {
-            updatedPrices[coin.id] = liveData[coin.id];
-          }
-        });
-
-        setLivePrices(prev => ({
-          ...prev,
-          ...updatedPrices,
-        }));
-
-        // 如果有选中的代币，更新其详情
-        if (selectedCoin && liveData[selectedCoin.id]) {
-          setLiveCoinData(prev => ({
-            ...prev!,
-            market_data: {
-              ...prev!.market_data,
-              current_price: {
-                usd: liveData[selectedCoin.id].usd,
-              },
-              price_change_percentage_24h: liveData[selectedCoin.id].usd_24h_change,
-            },
-          }));
-        }
-      } catch (error) {
-        console.error('Error fetching live prices:', error);
-      }
-    }, 30000);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [topCoins, selectedCoin]);
-
-  const handleCoinSelect = async (coinId: string) => {
-    setLoading(true);
-    try {
-      const coinData = await fetchCoinData(coinId);
-      setSelectedCoin(coinData);
-      setLiveCoinData(coinData);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching coin data:', error);
-      setLoading(false);
-    }
+  // 处理硬币选择
+  const handleCoinSelect = (symbol: string) => {
+    setSelectedCoinSymbol(symbol);
   };
 
   return (
-    <Layout className="min-h-screen bg-gray-900 text-white">
+    <Layout>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 20px" }}>
-        <h1 className="text-3xl font-bold">简易加密货币数据追踪</h1>
+        <h1>加密货币数据追踪</h1>
         <ConnectButton />
       </div>
 
-      <Content className="container mx-auto px-4 py-8">
+      <Content>
         <Spin spinning={loading}>
           <div style={{ display: "flex", gap: 12 }}>
             <CoinList
-              coins={topCoins}
+              isLoading={loading}
               onSelect={handleCoinSelect}
-              livePrices={livePrices}
             />
-            {selectedCoin && (
-              <div style={{ flex: 1 }} className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2">
-                  <CoinChart coinId={selectedCoin.id} coin={selectedCoin} />
+            {selectedCoinSymbol && (
+              <div style={{ flex: 1 }}>
+                <div>
+                  <CoinChart
+                    coinSymbol={selectedCoinSymbol}
+                    isLoading={loading}
+                  />
                 </div>
-                <div className="lg:col-span-1">
-                  <CoinDetails coin={liveCoinData || selectedCoin} />
+                <div>
+                  <CoinDetails
+                    coinSymbol={selectedCoinSymbol}
+                    isLoading={loading}
+                  />
+                  <CoinTrades
+                    coinSymbol={selectedCoinSymbol}
+                    isLoading={loading}
+                  />
                 </div>
               </div>
             )}
           </div>
         </Spin>
       </Content>
-      <Footer className="bg-gray-800 py-4 mt-12 text-center">
-        <p>时间有限，之前没玩过小代币，只是随便填写一些字段上去</p>
+      <Footer>
+        <p>coingecko需要付费账号，免费账号会被限流，所以目前使用的是币安数据。</p>
+        <p>交易功能相对会简单，直接用币安就可以，当然如果是做合约的话，直接用web3就可以了</p>
+        <p>样式比较丑，见谅见谅</p>
       </Footer>
     </Layout>
   );
-}
+};
 
 export default App;

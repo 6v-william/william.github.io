@@ -1,104 +1,172 @@
 /**
- * 加密货币基本信息
+ * CoinGecko API 数据类型
  */
-export interface CoinType {
-  /** 加密货币唯一标识符 */
+export interface CoinGeckoCoin {
   id: string;
-  /** 加密货币符号，如btc、eth */
   symbol: string;
-  /** 加密货币名称，如Bitcoin、Ethereum */
   name: string;
-  /** 加密货币图标URL */
   image: string;
-  /** 当前价格（USD） */
   current_price: number;
-  /** 市值（USD） */
   market_cap: number;
-  /** 市值排名 */
   market_cap_rank: number;
-  /** 完全稀释估值（USD），可选 */
   fully_diluted_valuation?: number;
-  /** 24小时交易量（USD） */
   total_volume: number;
-  /** 24小时最高价（USD） */
   high_24h: number;
-  /** 24小时最低价（USD） */
   low_24h: number;
-  /** 24小时价格变化（USD） */
   price_change_24h: number;
-  /** 24小时价格变化百分比 */
   price_change_percentage_24h: number;
-  /** 24小时市值变化（USD） */
   market_cap_change_24h: number;
-  /** 24小时市值变化百分比 */
   market_cap_change_percentage_24h: number;
-  /** 流通供应量 */
   circulating_supply: number;
-  /** 总供应量，可选 */
   total_supply?: number;
-  /** 最大供应量，可选 */
   max_supply?: number;
-  /** 历史最高价（USD） */
   ath: number;
-  /** 历史最高价变化百分比 */
   ath_change_percentage: number;
-  /** 历史最高价日期 */
   ath_date: string;
-  /** 历史最低价（USD） */
   atl: number;
-  /** 历史最低价变化百分比 */
   atl_change_percentage: number;
-  /** 历史最低价日期 */
   atl_date: string;
-  /** 最后更新时间 */
   last_updated: string;
 }
 
-/**
- * 加密货币详情信息
- */
-export interface CoinDetailsType {
-  /** 加密货币唯一标识符 */
+export interface CoinGeckoDetails {
   id: string;
-  /** 加密货币符号 */
   symbol: string;
-  /** 加密货币名称 */
   name: string;
-  /** 加密货币图片信息 */
   image: {
-    /** 大图URL */
     large: string;
   };
-  /** 市场数据 */
   market_data: {
-    /** 当前价格信息 */
     current_price: {
-      /** 当前价格（USD） */
       usd: number;
     };
-    /** 价格变化百分比 */
     price_change_percentage_24h: number;
-    /** 7天价格变化百分比 */
     price_change_percentage_7d: number;
-    /** 市值信息 */
     market_cap: {
-      /** 市值（USD） */
       usd: number;
     };
-    /** 24小时交易量 */
     total_volume: {
-      /** 24小时交易量（USD） */
       usd: number;
     };
-    /** 24小时最高价 */
     high_24h: {
-      /** 24小时最高价（USD） */
       usd: number;
     };
-    /** 24小时最低价 */
     low_24h: {
-      /** 24小时最低价（USD） */
       usd: number;
     };
   };
 }
+
+/**
+ * Binance API 数据类型
+ */
+export interface BinanceSymbol {
+  symbol: string;
+  baseAsset: string;
+  quoteAsset: string;
+  status: string;
+  filters: any[];
+}
+
+export interface BinanceTicker {
+  symbol: string;
+  priceChange: string;
+  priceChangePercent: string;
+  weightedAvgPrice: string;
+  prevClosePrice: string;
+  lastPrice: string;
+  lastQty: string;
+  bidPrice: string;
+  askPrice: string;
+  openPrice: string;
+  highPrice: string;
+  lowPrice: string;
+  volume: string;
+  quoteVolume: string;
+  openTime: number;
+  closeTime: number;
+  firstId: number;
+  lastId: number;
+  count: number;
+}
+
+export interface BinanceKline {
+  openTime: number;
+  open: string;
+  high: string;
+  low: string;
+  close: string;
+  volume: string;
+  closeTime: number;
+  quoteAssetVolume: string;
+  numberOfTrades: number;
+  takerBuyBaseAssetVolume: string;
+  takerBuyQuoteAssetVolume: string;
+}
+
+export interface BinanceTrade {
+  e: string;
+  E: number;
+  s: string;
+  t: number;
+  p: string;
+  q: string;
+  b: number;
+  a: number;
+  T: number;
+  m: boolean;
+  M: boolean;
+}
+
+/**
+ * 应用内部统一使用的数据类型
+ */
+export interface CoinType {
+  id: string; // 唯一标识符
+  symbol: string; // 交易对符号
+  name: string; // 加密货币名称
+  image?: string; // 图标URL
+  price: number; // 当前价格
+  priceChange: number; // 价格变化
+  priceChangePercent: number; // 价格变化百分比
+  volume: number; // 成交量
+  high: number; // 最高价
+  low: number; // 最低价
+  marketCap?: number; // 市值 (如果有)
+  lastUpdate: number; // 最后更新时间
+}
+
+/**
+ * 数据转换工具
+ */
+export const convertBinanceTickerToCoinType = (ticker: BinanceTicker): CoinType => {
+  return {
+    id: ticker.symbol,
+    symbol: ticker.symbol,
+    name: ticker.symbol.replace('USDT', ''),
+    price: parseFloat(ticker.lastPrice),
+    priceChange: parseFloat(ticker.priceChange),
+    priceChangePercent: parseFloat(ticker.priceChangePercent),
+    volume: parseFloat(ticker.volume),
+    high: parseFloat(ticker.highPrice),
+    low: parseFloat(ticker.lowPrice),
+    lastUpdate: Date.now(),
+  };
+};
+
+export const convertCoinGeckoCoinToCoinType = (coin: CoinGeckoCoin): CoinType => {
+  return {
+    id: coin.id,
+    symbol: coin.symbol.toUpperCase(),
+    name: coin.name,
+    image: coin.image,
+    price: coin.current_price,
+    priceChange: coin.price_change_24h,
+    priceChangePercent: coin.price_change_percentage_24h,
+    volume: coin.total_volume,
+    high: coin.high_24h,
+    low: coin.low_24h,
+    marketCap: coin.market_cap,
+    lastUpdate: new Date(coin.last_updated).getTime(),
+  };
+};
