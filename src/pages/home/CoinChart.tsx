@@ -113,7 +113,6 @@ const CoinChart: React.FC<CoinChartProps> = ({ data, coin }) => {
 
   return (
     <Card
-      className="bg-gray-800 text-white rounded-xl shadow-lg h-full"
       title={`${ coin.name } 价格图表`}
       extra={
         <Select
@@ -128,14 +127,14 @@ const CoinChart: React.FC<CoinChartProps> = ({ data, coin }) => {
         </Select>
       }
     >
-      <div className="h-[400px]">
+      <div>
         {chartData.labels.length > 0 ? (
           <Line
             data={chartData}
             options={options}
           />
         ) : (
-          <div className="text-center py-16">加载图表数据...</div>
+          <div>加载图表数据...</div>
         )}
       </div>
     </Card>

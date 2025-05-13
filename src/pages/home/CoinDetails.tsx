@@ -17,13 +17,12 @@ const CoinDetails: React.FC<CoinDetailsProps> = ({ coin }) => {
   const low24h = market_data.low_24h.usd;
 
   return <Card
-    className="bg-gray-800 text-white rounded-xl shadow-lg"
     title={
-      <div className="flex items-center">
-        <img src={image.large} alt={name} className="w-10 h-10 rounded-full mr-3" />
+      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <img src={image.large} alt={name} style={{ width: 30, height: 30 }} />
         <div>
-          <h3 className="text-xl font-bold">{name}</h3>
-          <p className="text-gray-400">{symbol.toUpperCase()}</p>
+          <h3>{name}</h3>
+          <p>{symbol.toUpperCase()}</p>
         </div>
       </div>
     }
@@ -44,7 +43,7 @@ const CoinDetails: React.FC<CoinDetailsProps> = ({ coin }) => {
           value={priceChange24h}
           precision={2}
           valueStyle={{ color: priceChange24h >= 0 ? '#3f8600' : '#cf1322' }}
-          prefix={priceChange24h >= 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+          // prefix={priceChange24h >= 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
           suffix="%"
         />
       </Col>
@@ -56,7 +55,7 @@ const CoinDetails: React.FC<CoinDetailsProps> = ({ coin }) => {
           value={priceChange7d}
           precision={2}
           valueStyle={{ color: priceChange7d >= 0 ? '#3f8600' : '#cf1322' }}
-          prefix={priceChange7d >= 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+          // prefix={priceChange7d >= 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
           suffix="%"
         />
       </Col>

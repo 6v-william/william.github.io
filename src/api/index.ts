@@ -6,13 +6,14 @@ const options = {
   method: "GET",
   headers: {
     accept: 'application/json',
-    'x-cg-pro-api-key': 'CG-qbFnQVCQgcpBYxmmLCANxztX',
-  }
-}
+    // 'x-cg-pro-api-key': 'CG-qbFnQVCQgcpBYxmmLCANxztX',
+  },
+};
+// x_cg_pro_api_key=CG-qbFnQVCQgcpBYxmmLCANxztX&
 
 export const fetchTopCoins = async (limit = 10): Promise<Coin[]> => {
   const response = await fetch(
-    `${ API_BASE }/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${ limit }&page=1&sparkline=true&price_change_percentage=1h,24h,7d`,
+    `${ API_BASE }/coins/markets?&vs_currency=usd&order=market_cap_desc&per_page=${ limit }&page=1&sparkline=true&price_change_percentage=1h,24h,7d`,
     options
   );
   if (!response.ok) {

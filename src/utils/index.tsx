@@ -8,4 +8,4 @@ export const formatNumber = (num: number) => {
   } else {
     return num.toString();
   }
-}
+};

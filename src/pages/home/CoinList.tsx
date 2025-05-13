@@ -24,8 +24,8 @@ const CoinList: React.FC<CoinListProps> = ({ coins, onSelect, livePrices }) => {
       render: (_: any, record: any) => (
         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
           <img src={record.image} alt={record.name} style={{ width: 16, height: 16 }} />
-          <p className="font-medium">{record.name}</p>
-          <p className="text-gray-400 text-sm">{record.symbol.toUpperCase()}</p>
+          <p>{record.name}</p>
+          <p>{record.symbol.toUpperCase()}</p>
         </div>
       ),
     },
@@ -43,8 +43,8 @@ const CoinList: React.FC<CoinListProps> = ({ coins, onSelect, livePrices }) => {
         const livePrice = livePrices[record.id];
         const price = livePrice?.current_price || record.current_price;
         return (
-          <div className="flex items-center">
-            {livePrice && <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-2"></span>}
+          <div>
+            {livePrice && <span></span>}
             ${price.toLocaleString()}
           </div>
         );
@@ -103,11 +103,11 @@ const CoinList: React.FC<CoinListProps> = ({ coins, onSelect, livePrices }) => {
 
   return (
     <Table
+      style={{ flex: 1 }}
       dataSource={coins}
       columns={columns}
       rowKey="id"
       pagination={false}
-      className="bg-gray-800 rounded-xl shadow-lg overflow-hidden"
       bordered={false}
       tableLayout="fixed"
     />

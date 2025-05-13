@@ -23,7 +23,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const coins = await fetchTopCoins(2);
+        const coins = await fetchTopCoins(10);
         setTopCoins(coins);
         // 初始化实时价格数据
         const initialPrices: Record<string, Coin> = {};
@@ -84,7 +84,7 @@ function App() {
       } catch (error) {
         console.error('Error fetching live prices:', error);
       }
-    }, 10000);
+    }, 30000);
 
     return () => {
       if (intervalRef.current) {
@@ -111,32 +111,35 @@ function App() {
   };
 
   return (
-    <Layout className="min-h-screen bg-gray-900 text-white">
+    <Layout>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 20px" }}>
-        <h1 className="text-3xl font-bold">简易加密货币数据追踪</h1>
+        <h1>简易加密货币数据追踪</h1>
         <ConnectButton />
       </div>
 
-      <Content className="container mx-auto px-4 py-8">
+      <Content>
         <Spin spinning={loading}>
-          <CoinList
-            coins={topCoins}
-            onSelect={handleCoinSelect}
-            livePrices={livePrices}
-          />
-          {selectedCoin && (
-            <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-1">
-                <CoinDetails coin={liveCoinData || selectedCoin} />
+          <div style={{ display: "flex" }}>
+            <CoinList
+              coins={topCoins}
+              onSelect={handleCoinSelect}
+              livePrices={livePrices}
+            />
+            {selectedCoin && (
+              <div style={{ flex: 1 }}>
+                <div>
+                  <CoinChart data={historicalData} coin={selectedCoin} />
+                </div>
+                <div>
+                  <CoinDetails coin={liveCoinData || selectedCoin} />
+                </div>
               </div>
-              <div className="lg:col-span-2">
-                <CoinChart data={historicalData} coin={selectedCoin} />
-              </div>
-            </div>
-          )}
+            )}
+          </div>
+
         </Spin>
       </Content>
-      <Footer className="bg-gray-800 py-4 mt-12 text-center">
+      <Footer>
         <p>时间有限，之前没玩过小代币，只是随便填写一些字段上去</p>
       </Footer>
     </Layout>
