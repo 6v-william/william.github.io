@@ -1,0 +1,10 @@
+__tests__
+
+**/*.md
+**/*.svg
+**/*.ejs
+**/*.html
+package.json
+.umi
+.umi-production
+.umi-test
