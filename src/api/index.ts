@@ -1,4 +1,4 @@
-import { Coin } from "../pages/home/types";
+import { CoinType } from "../pages/home/types";
 
 // 使用CoinGecko API获取加密货币数据
 const API_BASE = 'https://api.coingecko.com/api/v3';
@@ -11,7 +11,7 @@ const options = {
 };
 // x_cg_pro_api_key=CG-qbFnQVCQgcpBYxmmLCANxztX&
 
-export const fetchTopCoins = async (limit = 10): Promise<Coin[]> => {
+export const fetchTopCoins = async (limit = 10): Promise<CoinType[]> => {
   const response = await fetch(
     `${ API_BASE }/coins/markets?&vs_currency=usd&order=market_cap_desc&per_page=${ limit }&page=1&sparkline=true&price_change_percentage=1h,24h,7d`,
     options

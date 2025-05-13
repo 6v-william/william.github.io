@@ -61,26 +61,26 @@ const CoinChart: React.FC<CoinChartProps> = ({ data, coin }) => {
         },
       },
       gridLineColor: 'rgba(203, 213, 225, 0.1)',
-      labels: {
-        formatter: function() {
-          if (this.value >= 1000) {
-            return '$' + (this.value / 1000) + 'k';
-          }
-          return '$' + this.value;
-        },
-        style: {
-          color: 'rgba(203, 213, 225, 0.7)',
-        },
-      },
+      // labels: {
+      //   formatter: function() {
+      //     if (this.value >= 1000) {
+      //       return '$' + (this.value / 1000) + 'k';
+      //     }
+      //     return '$' + this.value;
+      //   },
+      //   style: {
+      //     color: 'rgba(203, 213, 225, 0.7)',
+      //   },
+      // },
     },
     tooltip: {
       backgroundColor: 'rgba(30, 41, 59, 0.9)',
       style: {
         color: '#cbd5e1',
       },
-      formatter: function() {
-        return `<b>$${ this.y.toFixed(2) }</b><br/>${ Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) }`;
-      },
+      // formatter: function() {
+      //   return `<b>$${ this.y.toFixed(2) }</b><br/>${ Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) }`;
+      // },
     },
     legend: {
       enabled: false,
