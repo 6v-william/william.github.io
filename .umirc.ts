@@ -9,6 +9,10 @@ export default defineConfig({
   history: {
     type: 'hash',
   },
+  esbuildMinifyIIFE: true,
+  jsMinifierOptions: {
+    target: ['chrome80', 'es2020']
+  },
   metas: [
     {
       name: 'viewport',

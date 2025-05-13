@@ -9,11 +9,10 @@ const options = {
     // 'x-cg-pro-api-key': 'CG-qbFnQVCQgcpBYxmmLCANxztX',
   },
 };
-// x_cg_pro_api_key=CG-qbFnQVCQgcpBYxmmLCANxztX&
 
 export const fetchTopCoins = async (limit = 10): Promise<CoinType[]> => {
   const response = await fetch(
-    `${ API_BASE }/coins/markets?&vs_currency=usd&order=market_cap_desc&per_page=${ limit }&page=1&sparkline=true&price_change_percentage=1h,24h,7d`,
+    `${ API_BASE }/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${ limit }&page=1&sparkline=true&price_change_percentage=1h,24h,7d`,
     options
   );
   if (!response.ok) {
@@ -33,20 +32,16 @@ export const fetchCoinData = async (coinId: string) => {
   return response.json();
 };
 
-export const fetchHistoricalData = async (coinId: string, days = '14d') => {
+// 获取历史OHLC数据
+export const fetchHistoricalOHLCData = async (coinId: string) => {
   const response = await fetch(
-    `${ API_BASE }/coins/${ coinId }/market_chart?vs_currency=usd&days=${ days }&interval=daily`,
+    `${ API_BASE }/coins/${ coinId }/ohlc?vs_currency=usd&days=30`,
     options
   );
   if (!response.ok) {
-    throw new Error('Failed to fetch historical data');
+    throw new Error('Failed to fetch historical OHLC data');
   }
-  const data = await response.json();
-  // 转换数据格式以适应Chart.js
-  return data.prices.map(([timestamp, price]: [number, number]) => ({
-    x: new Date(timestamp),
-    y: price,
-  }));
+  return response.json();
 };
 
 // 获取实时价格数据

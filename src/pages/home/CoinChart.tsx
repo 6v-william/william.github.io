@@ -1,145 +1,111 @@
-import React, { useState } from 'react';
-import { Card, Select } from 'antd';
-import Highcharts from 'highcharts';
+import React, { useState, useEffect, useRef } from 'react';
+import { Card } from 'antd';
+import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import { CoinDetailsType } from './types';
+import { fetchHistoricalOHLCData } from '../../api/index';
 
 interface CoinChartProps {
-  data: { x: Date; y: number }[];
+  coinId: string;
   coin: CoinDetailsType;
 }
 
-const CoinChart: React.FC<CoinChartProps> = ({ data, coin }) => {
-  const [timePeriod, setTimePeriod] = useState('7d');
-  const { Option } = Select;
+const CoinChart: React.FC<CoinChartProps> = ({ coinId, coin }) => {
+  const [ohlcData, setOhlcData] = useState<any[]>([]);
+  const chartRef = useRef<any>(null);
+  const intervalRef = useRef<NodeJS.Timer | null>(null);
 
-  // 格式化数据以适应Highcharts
-  const formatData = (dataPoints: { x: Date; y: number }[]) => {
-    if (!dataPoints || dataPoints.length === 0) return [];
-
-    // 按时间排序
-    const sortedData = [...dataPoints].sort((a, b) => a.x.getTime() - b.x.getTime());
-
-    return sortedData.map(point => [point.x.getTime(), point.y]);
+  const fetchData = async () => {
+    try {
+      const data = await fetchHistoricalOHLCData(coinId);
+      setOhlcData(data);
+    } catch (error) {
+      console.error('Error fetching historical OHLC data:', error);
+    }
   };
 
-  const chartData = formatData(data);
+  useEffect(() => {
+    fetchData();
 
-  const options = {
+    // 每 10 秒（可根据需求调整）更新一次数据
+    intervalRef.current = setInterval(() => {
+      fetchData();
+    }, 20000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [coinId]);
+
+  const options: Highcharts.Options = {
     chart: {
-      type: 'line',
-      backgroundColor: '#1f2937',
-      style: {
-        fontFamily: 'sans-serif',
-        color: '#cbd5e1',
-      },
+      type: 'candlestick',
+      height: 400,
+      zoomType: 'x',
     },
     title: {
-      text: `${ coin.name } 价格图表`,
-      style: {
-        color: '#cbd5e1',
-      },
+      text: `${coin.name} 价格图表`,
     },
     xAxis: {
       type: 'datetime',
-      tickInterval: timePeriod === '1d' ? 3600 * 1000 // 1 hour
-        : timePeriod === '7d' ? 24 * 3600 * 1000 // 1 day
-          : timePeriod === '30d' ? 7 * 24 * 3600 * 1000 // 1 week
-            : 30 * 24 * 3600 * 1000, // 1 month
-      gridLineColor: 'rgba(203, 213, 225, 0.1)',
-      labels: {
-        style: {
-          color: 'rgba(203, 213, 225, 0.7)',
-        },
-      },
     },
     yAxis: {
       title: {
         text: '价格 (USD)',
-        style: {
-          color: '#cbd5e1',
-        },
       },
-      gridLineColor: 'rgba(203, 213, 225, 0.1)',
-      // labels: {
-      //   formatter: function() {
-      //     if (this.value >= 1000) {
-      //       return '$' + (this.value / 1000) + 'k';
-      //     }
-      //     return '$' + this.value;
-      //   },
-      //   style: {
-      //     color: 'rgba(203, 213, 225, 0.7)',
-      //   },
-      // },
+    },
+    rangeSelector: {
+      selected: 0, // 默认选中的时间范围，索引从 0 开始
+      inputEnabled: false, // 禁用输入框
+    },
+    scrollbar: {
+      enabled: true, // 启用滚动条
+    },
+    plotOptions: {
+      candlestick: {
+        color: 'pink',
+        lineColor: 'red',
+        upColor: 'lightgreen',
+        upLineColor: 'green',
+      },
     },
     tooltip: {
-      backgroundColor: 'rgba(30, 41, 59, 0.9)',
-      style: {
-        color: '#cbd5e1',
-      },
-      // formatter: function() {
-      //   return `<b>$${ this.y.toFixed(2) }</b><br/>${ Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) }`;
-      // },
-    },
-    legend: {
-      enabled: false,
+      shared: true,
+      useHTML: true,
+      headerFormat: '<small>{point.key}</small><table>',
+      pointFormat: '<tr><td style="color: {series.color}">open: </td>' +
+        '<td style="text-align: right"><b>${point.open:.2f}</b></td></tr>' +
+        '<tr><td style="color: {series.color}">high: </td>' +
+        '<td style="text-align: right"><b>${point.high:.2f}</b></td></tr>' +
+        '<tr><td style="color: {series.color}">low: </td>' +
+        '<td style="text-align: right"><b>${point.low:.2f}</b></td></tr>' +
+        '<tr><td style="color: {series.color}">close: </td>' +
+        '<td style="text-align: right"><b>${point.close:.2f}</b></td></tr>',
+      footerFormat: '</table>',
+      valueDecimals: 2,
     },
     series: [
       {
-        name: `${ coin.name } 价格 (USD)`,
-        data: chartData,
-        color: '#165DFF',
-        fillColor: {
-          linearGradient: {
-            x1: 0,
-            y1: 0,
-            x2: 0,
-            y2: 1,
-          },
-          stops: [
-            [0, 'rgba(22, 93, 255, 0.1)'],
-            [1, 'rgba(22, 93, 255, 0)'],
-          ],
-        },
-        fillOpacity: 0.5,
-        lineWidth: 2,
-        marker: {
-          enabled: false,
-          radius: 4,
-          fillColor: '#165DFF',
-        },
+        name: `${coin.name}`,
+        type: 'candlestick',
+        data: ohlcData,
       },
     ],
-  };
-
-  const handlePeriodChange = (value: string) => {
-    setTimePeriod(value);
-    // 这里可以添加代码来根据新的时间周期重新获取数据
   };
 
   return (
     <Card
       className="bg-gray-800 text-white rounded-xl shadow-lg h-full"
-      title={`${ coin.name } 价格图表`}
-      extra={
-        <Select
-          defaultValue="7d"
-          style={{ width: 120 }}
-          onChange={handlePeriodChange}
-        >
-          <Option value="1d">1天</Option>
-          <Option value="7d">7天</Option>
-          <Option value="30d">30天</Option>
-          <Option value="90d">90天</Option>
-        </Select>
-      }
+      title={`${coin.name} 价格图表`}
     >
       <div className="h-[400px]">
-        {chartData.length > 0 ? (
+        {ohlcData.length > 0 ? (
           <HighchartsReact
             highcharts={Highcharts}
             options={options}
+            ref={chartRef}
           />
         ) : (
           <div className="text-center py-16">加载图表数据...</div>

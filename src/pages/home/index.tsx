@@ -3,10 +3,9 @@ import { Layout, Spin } from 'antd';
 import CoinList from './CoinList';
 import CoinChart from './CoinChart';
 import CoinDetails from './CoinDetails';
-import { fetchTopCoins, fetchCoinData, fetchHistoricalData, fetchLivePrice } from '@/api/index';
+import { fetchTopCoins, fetchCoinData, fetchLivePrice } from '@/api/index';
 import { CoinType, CoinDetailsType } from './types';
 import 'antd/dist/reset.css';
-// import './App.css';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const { Content, Footer } = Layout;
@@ -14,7 +13,6 @@ const { Content, Footer } = Layout;
 function App() {
   const [topCoins, setTopCoins] = useState<CoinType[]>([]);
   const [selectedCoin, setSelectedCoin] = useState<CoinDetailsType | null>(null);
-  const [historicalData, setHistoricalData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [livePrices, setLivePrices] = useState<Record<string, CoinType>>({});
   const [liveCoinData, setLiveCoinData] = useState<CoinDetailsType | null>(null);
@@ -96,13 +94,9 @@ function App() {
   const handleCoinSelect = async (coinId: string) => {
     setLoading(true);
     try {
-      const [coinData, histData] = await Promise.all([
-        fetchCoinData(coinId),
-        fetchHistoricalData(coinId, '7d'),
-      ]);
+      const coinData = await fetchCoinData(coinId);
       setSelectedCoin(coinData);
       setLiveCoinData(coinData);
-      setHistoricalData(histData);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching coin data:', error);
@@ -111,35 +105,34 @@ function App() {
   };
 
   return (
-    <Layout>
+    <Layout className="min-h-screen bg-gray-900 text-white">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 20px" }}>
-        <h1>简易加密货币数据追踪</h1>
+        <h1 className="text-3xl font-bold">简易加密货币数据追踪</h1>
         <ConnectButton />
       </div>
 
-      <Content>
+      <Content className="container mx-auto px-4 py-8">
         <Spin spinning={loading}>
-          <div style={{ display: "flex" }}>
+          <div style={{ display: "flex", gap: 12 }}>
             <CoinList
               coins={topCoins}
               onSelect={handleCoinSelect}
               livePrices={livePrices}
             />
             {selectedCoin && (
-              <div style={{ flex: 1 }}>
-                <div>
-                  <CoinChart data={historicalData} coin={selectedCoin} />
+              <div style={{ flex: 1 }} className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                  <CoinChart coinId={selectedCoin.id} coin={selectedCoin} />
                 </div>
-                <div>
+                <div className="lg:col-span-1">
                   <CoinDetails coin={liveCoinData || selectedCoin} />
                 </div>
               </div>
             )}
           </div>
-
         </Spin>
       </Content>
-      <Footer>
+      <Footer className="bg-gray-800 py-4 mt-12 text-center">
         <p>时间有限，之前没玩过小代币，只是随便填写一些字段上去</p>
       </Footer>
     </Layout>
