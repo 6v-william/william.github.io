@@ -5,7 +5,7 @@ import { name, version } from './package.json';
 
 export default defineConfig({
   title: 'pc-template',
-  outputPath: 'dist',
+  outputPath: 'docs',
   history: {
     type: 'hash',
   },
