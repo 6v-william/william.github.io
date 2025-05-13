@@ -4,7 +4,7 @@ import CoinList from './CoinList';
 import CoinChart from './CoinChart';
 import CoinDetails from './CoinDetails';
 import { fetchTopCoins, fetchCoinData, fetchHistoricalData, fetchLivePrice } from '@/api/index';
-import { Coin, CoinDetails as CoinDetailsType } from './types';
+import { CoinType, CoinDetailsType } from './types';
 import 'antd/dist/reset.css';
 // import './App.css';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
@@ -12,11 +12,11 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 const { Content, Footer } = Layout;
 
 function App() {
-  const [topCoins, setTopCoins] = useState<Coin[]>([]);
+  const [topCoins, setTopCoins] = useState<CoinType[]>([]);
   const [selectedCoin, setSelectedCoin] = useState<CoinDetailsType | null>(null);
   const [historicalData, setHistoricalData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [livePrices, setLivePrices] = useState<Record<string, Coin>>({});
+  const [livePrices, setLivePrices] = useState<Record<string, CoinType>>({});
   const [liveCoinData, setLiveCoinData] = useState<CoinDetailsType | null>(null);
   const intervalRef = useRef<NodeJS.Timer | null>(null);
 
@@ -26,7 +26,7 @@ function App() {
         const coins = await fetchTopCoins(10);
         setTopCoins(coins);
         // 初始化实时价格数据
-        const initialPrices: Record<string, Coin> = {};
+        const initialPrices: Record<string, CoinType> = {};
         coins.forEach((coin: any) => {
           initialPrices[coin.id] = coin;
         });
@@ -56,7 +56,7 @@ function App() {
         const coinIds = topCoins.map(coin => coin.id).join(',');
         const liveData = await fetchLivePrice(coinIds);
 
-        const updatedPrices: Record<string, Coin> = {};
+        const updatedPrices: Record<string, CoinType> = {};
         topCoins.forEach(coin => {
           if (liveData[coin.id]) {
             updatedPrices[coin.id] = liveData[coin.id];

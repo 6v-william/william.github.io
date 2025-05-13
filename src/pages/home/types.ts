@@ -1,7 +1,7 @@
 /**
  * 加密货币基本信息
  */
-export interface Coin {
+export interface CoinType {
   /** 加密货币唯一标识符 */
   id: string;
   /** 加密货币符号，如btc、eth */
@@ -57,7 +57,7 @@ export interface Coin {
 /**
  * 加密货币详情信息
  */
-export interface CoinDetails {
+export interface CoinDetailsType {
   /** 加密货币唯一标识符 */
   id: string;
   /** 加密货币符号 */

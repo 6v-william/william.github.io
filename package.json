@@ -48,6 +48,8 @@
     "@types/react": "^18.2.15",
     "chart.js": "^4.4.9",
     "chartjs-adapter-date-fns": "^3.0.0",
+    "highcharts": "^12.2.0",
+    "highcharts-react-official": "^3.2.2",
     "less-loader": "^12.2.0",
     "prettier": "^3.0.0",
     "typescript": "^5.1.6",

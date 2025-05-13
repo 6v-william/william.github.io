@@ -1,12 +1,12 @@
 import React from 'react';
 import { Table, Tag, Button } from 'antd';
-import { Coin } from './types';
+import { CoinType } from './types';
 import { formatNumber } from '@/utils';
 
 interface CoinListProps {
-  coins: Coin[];
+  coins: CoinType[];
   onSelect: (coinId: string) => void;
-  livePrices: Record<string, Coin>;
+  livePrices: Record<string, CoinType>;
 }
 
 const CoinList: React.FC<CoinListProps> = ({ coins, onSelect, livePrices }) => {
