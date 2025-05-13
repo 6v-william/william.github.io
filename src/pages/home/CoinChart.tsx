@@ -238,23 +238,21 @@ const CoinChart: React.FC<CoinChartProps> = ({ coinSymbol, isLoading }) => {
 
   return (
     <Card
-      title={
-        <div>
-          {coinSymbol} 实时数据
-        </div>
-      }
+      title={<div style={{ fontSize: '20px', fontWeight: 'bold', color: '#333', marginBottom: '10px' }}>{coinSymbol} 实时数据</div>}
+      style={{ borderRadius: '8px', boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)', paddingTop: '20px', backgroundColor: '#fff' }}
     >
-      <div>
+      <div style={{ position: 'relative', width: '100%', height: '400px' }}>
         {ohlcData.length > 0 ? (
           <HighchartsReact
             highcharts={Highcharts}
             options={options}
             ref={chartRef}
+            style={{ width: '100%', height: '100%' }}
           />
         ) : isLoading ? (
-          <div>加载图表数据...</div>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', fontSize: '16px', color: '#666' }}>加载图表数据...</div>
         ) : (
-          <div>无今日数据</div>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', fontSize: '16px', color: '#666' }}>无今日数据</div>
         )}
       </div>
     </Card>

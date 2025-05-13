@@ -7,7 +7,7 @@ export interface TradeType {
   price: number; // 交易价格
   amount: number; // 交易数量
   total: number; // 交易总额 (price * amount)
-  direction: 'buy' | 'sell'; // 交易方向：买入或卖出
+  direction: 'buy' |'sell'; // 交易方向：买入或卖出
   timestamp: string; // 交易时间戳
 }
 
@@ -75,46 +75,59 @@ const CoinTrades: React.FC<CoinTradesProps> = ({ coinSymbol, isLoading }) => {
         const date = new Date(timestamp);
         return date.toLocaleTimeString();
       },
+      style: {
+        textAlign: 'center',
+      },
     },
     {
       title: '价格',
       dataIndex: 'price',
       key: 'price',
       render: (price: number) => `$${ price.toFixed(2) }`,
+      style: {
+        textAlign: 'center',
+      },
     },
     {
       title: '数量',
       dataIndex: 'amount',
       key: 'amount',
       render: (amount: number) => amount.toFixed(4),
+      style: {
+        textAlign: 'center',
+      },
     },
     {
       title: '总额',
       dataIndex: 'total',
       key: 'total',
       render: (total: number) => `$${ total.toFixed(2) }`,
+      style: {
+        textAlign: 'center',
+      },
     },
     {
       title: '方向',
       dataIndex: 'direction',
       key: 'direction',
-      render: (direction: 'buy' | 'sell') => (
+      render: (direction: 'buy' |'sell') => (
         <Tag color={direction === 'buy' ? 'green' : 'red'}>
           {direction === 'buy' ? '买入' : '卖出'}
         </Tag>
       ),
+      style: {
+        textAlign: 'center',
+      },
     },
   ];
 
   return (
-    <div>
-      <h3>实时交易数据</h3>
+    <div style={{ borderRadius: '8px', boxShadow: '0 2px 6px rgba(0, 0, 0, 0.1)', overflow: 'hidden', backgroundColor: '#fff', padding: '20px' }}>
+      <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '10px', color: '#333' }}>实时交易数据</h3>
       {isLoading ? (
-        <Skeleton active paragraph={{ rows: 5 }} />
+        <Skeleton active paragraph={{ rows: 5 }} style={{ borderRadius: '8px' }} />
       ) : trades.length === 0 ? (
-        <div>
-          等待交易数据...
-        </div>
+        <div style={{ fontSize: '16px', color: '#666', textAlign: 'center', padding: '20px 0' }}>等待交易数据...</div>
       ) : (
         <Table
           dataSource={trades}
@@ -122,6 +135,7 @@ const CoinTrades: React.FC<CoinTradesProps> = ({ coinSymbol, isLoading }) => {
           rowKey="id"
           pagination={false}
           bordered={false}
+          style={{ width: '100%' }}
         />
       )}
     </div>
